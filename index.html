@@ -1,15 +1,2675 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人作品集</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人作品集</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* 全局平滑滚动 */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      transition: all 0.3s ease;
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            secondary: '#7c3aed',
+            accent: '#ec4899',
+            dark: '#0f172a',
+            light: '#f8fafc',
+            'neutral-50': '#f9fafb',
+            'neutral-100': '#f3f4f6',
+            'neutral-200': '#e5e7eb',
+            'neutral-300': '#d1d5db',
+            'neutral-400': '#9ca3af',
+            'neutral-500': '#6b7280',
+            'neutral-600': '#4b5563',
+            'neutral-700': '#374151',
+            'neutral-800': '#1f2937',
+            'neutral-900': '#111827'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Merriweather', 'Georgia', 'serif']
+          },
+          boxShadow: {
+            'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+            'medium': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+            'strong': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'hover': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+          },
+          transitionProperty: {
+            'height': 'height',
+            'spacing': 'margin, padding',
+            'transform-opacity': 'transform, opacity',
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+            'fade-in': 'fadeIn 0.6s ease-out forwards',
+            'slide-up': 'slideUp 0.4s ease-out forwards',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-in': 'bounceIn 0.6s ease-out forwards',
+            'zoom-in': 'zoomIn 0.5s ease-out forwards',
+            'float': 'float 3s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': {
+                opacity: '0',
+                transform: 'translateY(30px)'
+              },
+              '100%': {
+                opacity: '1',
+                transform: 'translateY(0)'
+              }
+            },
+            fadeIn: {
+              '0%': {
+                opacity: '0'
+              },
+              '100%': {
+                opacity: '1'
+              }
+            },
+            slideUp: {
+              '0%': {
+                opacity: '0',
+                transform: 'translateY(20px)'
+              },
+              '100%': {
+                opacity: '1',
+                transform: 'translateY(0)'
+              }
+            },
+            bounceIn: {
+              '0%': {
+                opacity: '0',
+                transform: 'scale(0.3)'
+              },
+              '50%': {
+                opacity: '1',
+                transform: 'scale(1.05)'
+              },
+              '70%': {
+                transform: 'scale(0.9)'
+              },
+              '100%': {
+                opacity: '1',
+                transform: 'scale(1)'
+              }
+            },
+            zoomIn: {
+              '0%': {
+                opacity: '0',
+                transform: 'scale(0.8)'
+              },
+              '100%': {
+                opacity: '1',
+                transform: 'scale(1)'
+              }
+            },
+            float: {
+              '0%, 100%': {
+                transform: 'translateY(0)'
+              },
+              '50%': {
+                transform: 'translateY(-10px)'
+              }
+            }
+          }
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .masonry-grid {
+        column-count: 1;
+        column-gap: 1.5rem;
+      }
+      @media (min-width: 640px) {
+        .masonry-grid {
+          column-count: 2;
+        }
+      }
+      @media (min-width: 1024px) {
+        .masonry-grid {
+          column-count: 3;
+        }
+      }
+      @media (min-width: 1280px) {
+        .masonry-grid {
+          column-count: 4;
+        }
+      }
+      .masonry-item {
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+      }
+      .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 #f1f5f9;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      .text-gradient {
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .bg-gradient-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      }
+      .bg-gradient-secondary {
+        background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+      }
+      .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .btn-primary {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+      .input-focus {
+        transition: all 0.2s ease;
+      }
+      .input-focus:focus {
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        transform: translateY(-1px);
+      }
+      .nav-link {
+        position: relative;
+        transition: all 0.2s ease;
+      }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #2563eb;
+        transition: width 0.2s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .nav-scrolled {
+        @apply bg-white/95 backdrop-blur-md shadow-md;
+      }
+      .skill-bar {
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+      }
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out forwards;
+      }
+      .fade-in-left {
+        animation: fadeInLeft 0.6s ease-out forwards;
+      }
+      .fade-in-right {
+        animation: fadeInRight 0.6s ease-out forwards;
+      }
+      .scale-in {
+        animation: scaleIn 0.4s ease-out forwards;
+      }
+      .pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes fadeInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-4xl font-bold text-center mb-8">个人作品集</h1>
-        <p class="text-center text-gray-600">正在建设中...</p>
-    </div>
+<body class="bg-light text-dark min-h-screen">
+  <div id="root"></div>
+  <script type="text/jsx">
+    // 类型定义
+    const AppStep = {
+      HOME: 'HOME',
+      WORK_DETAIL: 'WORK_DETAIL',
+      ABOUT: 'ABOUT',
+      ADMIN_LOGIN: 'ADMIN_LOGIN',
+      ADMIN_DASHBOARD: 'ADMIN_DASHBOARD',
+      ADMIN_WORK_MANAGE: 'ADMIN_WORK_MANAGE',
+      ADMIN_WORK_ADD: 'ADMIN_WORK_ADD',
+      ADMIN_WORK_EDIT: 'ADMIN_WORK_EDIT',
+      ADMIN_CATEGORY_MANAGE: 'ADMIN_CATEGORY_MANAGE',
+      ADMIN_CATEGORY_ADD: 'ADMIN_CATEGORY_ADD',
+      ADMIN_CATEGORY_EDIT: 'ADMIN_CATEGORY_EDIT',
+      ADMIN_ABOUT_MANAGE: 'ADMIN_ABOUT_MANAGE'
+    };
+
+    // 元素进入视口动画钩子
+    const useInViewAnimation = (options = {}) => {
+      const ref = React.useRef(null);
+      const [isInView, setIsInView] = React.useState(false);
+
+      React.useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.unobserve(entry.target);
+          }
+        }, {
+          threshold: 0.1,
+          rootMargin: '-50px 0px',
+          ...options
+        });
+
+        if (ref.current) {
+          observer.observe(ref.current);
+        }
+
+        return () => {
+          if (ref.current) {
+            observer.unobserve(ref.current);
+          }
+        };
+      }, [options]);
+
+      return [ref, isInView];
+    };
+
+    // 色彩处理工具函数
+    const sortWorksByHue = (works) => {
+      return [...works].sort((a, b) => a.hsbColor.h - b.hsbColor.h);
+    };
+
+    // 从图片生成颜色的函数
+    const generateColorsFromImage = (imageUrl) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        try {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+          const colorCounts = {};
+
+          // 采样像素
+          for (let i = 0; i < data.length; i += 4 * 10) { // 每10个像素采样一次
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+
+            if (a > 128) { // 忽略透明度高的像素
+              const hex = rgbToHex(r, g, b);
+              colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+            }
+          }
+
+          // 找出最常见的颜色
+          const sortedColors = Object.entries(colorCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+          if (sortedColors.length > 0) {
+            const dominantColor = sortedColors[0][0];
+            // 设置主色调输入框
+            const colorInput = document.querySelector('input[type="color"]');
+            const colorTextInput = document.querySelector('input[placeholder="请输入主色调"]');
+            if (colorInput) colorInput.value = dominantColor;
+            if (colorTextInput) colorTextInput.value = dominantColor;
+          }
+        } catch (error) {
+          console.error('Error generating colors:', error);
+        }
+      };
+      img.src = imageUrl;
+    };
+
+    // RGB转十六进制颜色
+    const rgbToHex = (r, g, b) => {
+      return '#' + [r, g, b].map(x => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('');
+    };
+
+    // Mock数据
+    const mockCategories = [
+      { id: '1', name: '书籍装帧', order: 1, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: '2', name: 'UI设计', order: 2, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: '3', name: '海报设计', order: 3, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: '4', name: '插画设计', order: 4, createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' }
+    ];
+
+    const mockWorks = [
+      {
+        id: '1',
+        title: '现代诗集装帧设计',
+        description: '为当代诗人设计的诗集装帧，采用极简风格，突出诗歌的韵律感和意境。',
+        images: [
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20poetry%20book%20cover%20design%20minimalist%20style&image_size=portrait_4_3',
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20binding%20details%20modern%20design&image_size=portrait_4_3'
+        ],
+        category: '1',
+        year: 2024,
+        dominantColor: '#3b82f6',
+        hsbColor: { h: 217, s: 0.75, b: 0.65 },
+        viewCount: 120,
+        createdAt: '2024-01-10T00:00:00Z',
+        updatedAt: '2024-01-10T00:00:00Z'
+      },
+      {
+        id: '2',
+        title: '电子商务网站UI设计',
+        description: '为小型电商平台设计的用户界面，注重用户体验和转化率优化。',
+        images: [
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=e-commerce%20website%20ui%20design%20modern%20clean&image_size=landscape_4_3',
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=product%20page%20design%20e-commerce&image_size=landscape_4_3'
+        ],
+        category: '2',
+        year: 2024,
+        dominantColor: '#10b981',
+        hsbColor: { h: 160, s: 0.8, b: 0.47 },
+        viewCount: 95,
+        createdAt: '2024-01-08T00:00:00Z',
+        updatedAt: '2024-01-08T00:00:00Z'
+      },
+      {
+        id: '3',
+        title: '音乐节海报设计',
+        description: '为城市音乐节设计的系列海报，采用大胆的色彩和动感的构图。',
+        images: [
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=music%20festival%20poster%20design%20vibrant%20colors&image_size=portrait_4_3',
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=concert%20poster%20modern%20graphic%20design&image_size=portrait_4_3'
+        ],
+        category: '3',
+        year: 2023,
+        dominantColor: '#f97316',
+        hsbColor: { h: 24, s: 0.9, b: 0.65 },
+        viewCount: 150,
+        createdAt: '2023-12-05T00:00:00Z',
+        updatedAt: '2023-12-05T00:00:00Z'
+      },
+      {
+        id: '4',
+        title: '儿童绘本插画',
+        description: '为儿童绘本创作的系列插画，风格温暖明快，适合3-6岁儿童阅读。',
+        images: [
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=children%20book%20illustration%20colorful%20friendly&image_size=portrait_4_3',
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=kids%20storybook%20art%20whimsical%20style&image_size=portrait_4_3'
+        ],
+        category: '4',
+        year: 2023,
+        dominantColor: '#8b5cf6',
+        hsbColor: { h: 260, s: 0.65, b: 0.6 },
+        viewCount: 85,
+        createdAt: '2023-11-20T00:00:00Z',
+        updatedAt: '2023-11-20T00:00:00Z'
+      },
+      {
+        id: '5',
+        title: '企业年报设计',
+        description: '为科技公司设计的年度报告，结合数据可视化和品牌元素。',
+        images: [
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=corporate%20annual%20report%20design%20professional&image_size=portrait_4_3',
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=data%20visualization%20infographic%20design&image_size=portrait_4_3'
+        ],
+        category: '1',
+        year: 2024,
+        dominantColor: '#6366f1',
+        hsbColor: { h: 239, s: 0.6, b: 0.55 },
+        viewCount: 60,
+        createdAt: '2024-01-05T00:00:00Z',
+        updatedAt: '2024-01-05T00:00:00Z'
+      },
+      {
+        id: '6',
+        title: '移动应用UI设计',
+        description: '为健康追踪应用设计的用户界面，注重数据清晰展示和用户交互体验。',
+        images: [
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=health%20tracking%20app%20ui%20design%20clean&image_size=portrait_4_3',
+          'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=mobile%20app%20dashboard%20design%20modern&image_size=portrait_4_3'
+        ],
+        category: '2',
+        year: 2023,
+        dominantColor: '#14b8a6',
+        hsbColor: { h: 173, s: 0.7, b: 0.44 },
+        viewCount: 110,
+        createdAt: '2023-12-15T00:00:00Z',
+        updatedAt: '2023-12-15T00:00:00Z'
+      }
+    ];
+
+    const mockVisitStats = {
+      totalVisits: 528,
+      workVisits: {
+        '1': 120,
+        '2': 95,
+        '3': 150,
+        '4': 85,
+        '5': 60,
+        '6': 110
+      },
+      lastUpdated: new Date().toISOString()
+    };
+
+    const mockAboutMe = {
+      id: '1',
+      name: '设计师',
+      title: '专业平面设计师',
+      avatar: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20portrait%20of%20graphic%20designer%20creative%20person&image_size=square',
+      bio: '我是一名专业的平面设计师，拥有5年的设计经验，专注于书籍装帧、UI设计、海报设计和插画创作。我热爱将创意转化为视觉作品，注重细节和用户体验，致力于为每个项目带来独特的视觉解决方案。\n\n我的设计风格多变，能够根据项目需求调整创作方向，从极简主义到大胆的色彩运用，都能轻松驾驭。我相信好的设计不仅要美观，更要能够有效地传达信息和情感。',
+      email: 'designer@example.com',
+      phone: '+86 138 0013 8000',
+      location: '上海市',
+      skills: [
+        { id: '1', name: '平面设计', level: 95 },
+        { id: '2', name: 'UI/UX设计', level: 90 },
+        { id: '3', name: '插画创作', level: 85 },
+        { id: '4', name: '3D建模', level: 70 }
+      ],
+      experiences: [
+        {
+          id: '1',
+          company: '创意设计有限公司',
+          position: '资深平面设计师',
+          period: '2022年至今',
+          responsibilities: [
+            '负责公司品牌视觉识别系统设计',
+            '主导产品包装设计和宣传材料制作',
+            '参与客户项目的创意构思和设计执行',
+            '指导初级设计师的工作并提供专业建议'
+          ]
+        },
+        {
+          id: '2',
+          company: '数字营销 agency',
+          position: '平面设计师',
+          period: '2020年-2022年',
+          responsibilities: [
+            '设计社交媒体营销素材和广告创意',
+            '参与品牌推广活动的视觉设计',
+            '协助团队完成大型项目的设计工作',
+            '维护客户关系并提供设计解决方案'
+          ]
+        },
+        {
+          id: '3',
+          company: '文化传媒公司',
+          position: '初级设计师',
+          period: '2019年-2020年',
+          responsibilities: [
+            '制作宣传海报和活动物料',
+            '协助完成书籍装帧和排版设计',
+            '参与公司内部设计项目的执行',
+            '学习和掌握最新的设计软件和技术'
+          ]
+        }
+      ],
+      socialLinks: {
+        weixin: '',
+        weibo: '',
+        github: '',
+        dribbble: ''
+      },
+      stats: {
+        totalProjects: 20,
+        happyClients: 15,
+        experienceYears: 5,
+        awards: 3
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z'
+    };
+
+    const initialState = {
+      step: AppStep.HOME,
+      works: mockWorks,
+      categories: mockCategories,
+      selectedWorkId: null,
+      selectedCategoryId: null,
+      visitStats: mockVisitStats,
+      aboutMe: mockAboutMe,
+      isAdminLoggedIn: false,
+      currentAdmin: null,
+      tempWorkImages: []
+    };
+
+    // 导航组件
+    const Navigation = ({ state, updateState }) => {
+      const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+      const [scrolled, setScrolled] = React.useState(false);
+      
+      React.useEffect(() => {
+        const handleScroll = () => {
+          if (window.scrollY > 50) {
+            setScrolled(true);
+          } else {
+            setScrolled(false);
+          }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+      
+      const handleCategoryClick = (categoryId) => {
+        updateState({ step: AppStep.HOME, selectedCategoryId: categoryId });
+        setMobileMenuOpen(false);
+      };
+
+      const handleAboutClick = () => {
+        updateState({ step: AppStep.ABOUT });
+        setMobileMenuOpen(false);
+      };
+
+      const handleHomeClick = () => {
+        updateState({ step: AppStep.HOME, selectedCategoryId: null });
+        setMobileMenuOpen(false);
+      };
+
+      const handleAdminClick = () => {
+        updateState({ step: AppStep.ADMIN_LOGIN });
+        setMobileMenuOpen(false);
+      };
+
+      const toggleMobileMenu = () => {
+        setMobileMenuOpen(!mobileMenuOpen);
+      };
+
+      return (
+        <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-white shadow-soft'}`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <button 
+                  onClick={handleHomeClick}
+                  className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient hover:opacity-90 transition-opacity"
+                >
+                  个人作品集
+                </button>
+              </div>
+              <nav className="hidden md:flex space-x-8 items-center">
+                <div className="flex space-x-6 overflow-x-auto pb-2 custom-scrollbar">
+                  {state.categories.map(category => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategoryClick(category.id)}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 nav-link ${
+                        state.selectedCategoryId === category.id
+                          ? 'text-primary font-semibold'
+                          : 'text-neutral-600 hover:text-primary'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={handleAboutClick}
+                  className="px-4 py-2 rounded-md text-sm font-medium text-neutral-600 hover:text-primary transition-colors nav-link"
+                >
+                  关于我
+                </button>
+                <button
+                  onClick={handleAdminClick}
+                  className="px-5 py-2.5 rounded-md text-sm font-medium bg-gradient-primary text-white btn-primary shadow-md hover:shadow-lg"
+                >
+                  <i className="fa fa-cog mr-1"></i>
+                  管理后台
+                </button>
+              </nav>
+              <div className="md:hidden">
+                <button 
+                  onClick={toggleMobileMenu}
+                  className="p-2 rounded-md text-neutral-600 hover:bg-neutral-100 transition-colors"
+                >
+                  <i className={`fa ${mobileMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* 移动端菜单 */}
+          {mobileMenuOpen && (
+            <div className="md:hidden bg-white shadow-md">
+              <div className="px-4 py-3 space-y-3">
+                <div className="space-y-2">
+                  {state.categories.map(category => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategoryClick(category.id)}
+                      className={`w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                        state.selectedCategoryId === category.id
+                          ? 'text-primary font-semibold bg-neutral-50'
+                          : 'text-neutral-600 hover:bg-neutral-50'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="pt-3 border-t border-neutral-200">
+                  <button
+                    onClick={handleAboutClick}
+                    className="w-full text-left px-4 py-2 rounded-md text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
+                  >
+                    关于我
+                  </button>
+                  <button
+                    onClick={handleAdminClick}
+                    className="w-full mt-2 px-4 py-2.5 rounded-md text-sm font-medium bg-gradient-primary text-white btn-primary shadow-md hover:shadow-lg"
+                  >
+                    <i className="fa fa-cog mr-1"></i>
+                    管理后台
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </header>
+      );
+    };
+
+    // 瀑布流组件
+    const WaterfallGrid = ({ works, onWorkClick }) => {
+      // 按HSB色相排序作品，实现色彩过渡排版
+      const sortedWorks = sortWorksByHue(works);
+
+      return (
+        <div className="masonry-grid">
+          {sortedWorks.map((work, index) => (
+            <div
+              key={work.id}
+              className="masonry-item bg-white rounded-xl shadow-medium overflow-hidden card-hover animate-fade-in"
+              onClick={() => onWorkClick(work.id)}
+              style={{ 
+                borderTop: `4px solid ${work.dominantColor}`,
+                animationDelay: `${index * 0.1}s`
+              }}
+            >
+              <div className="overflow-hidden relative group">
+                <img
+                  src={work.images[0]}
+                  alt={work.title}
+                  className="w-full transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  style={{ height: `${200 + Math.random() * 150}px` }} // 随机高度，实现瀑布流效果
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                  <div className="p-4 text-white">
+                    <h4 className="font-semibold">查看详情</h4>
+                  </div>
+                </div>
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-semibold text-neutral-800 mb-2 hover:text-primary transition-colors">{work.title}</h3>
+                <p className="text-sm text-neutral-600 mb-4 line-clamp-2">{work.description}</p>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-neutral-500 font-medium">{work.year}</span>
+                  <span className="flex items-center text-neutral-500 bg-neutral-100 px-2 py-1 rounded-full">
+                    <i className="fa fa-eye mr-1"></i>
+                    {work.viewCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    // 作品详情页
+    const WorkDetailPage = ({ state, updateState }) => {
+      const [selectedImage, setSelectedImage] = React.useState(null);
+      const work = state.works.find(w => w.id === state.selectedWorkId);
+      const category = state.categories.find(c => c.id === work?.category);
+
+      if (!work) return null;
+
+      const handleBackClick = () => {
+        updateState({ step: AppStep.HOME, selectedWorkId: null });
+      };
+
+      const openImageModal = (imageUrl) => {
+        setSelectedImage(imageUrl);
+      };
+
+      const closeImageModal = () => {
+        setSelectedImage(null);
+      };
+
+      return (
+        <div className="min-h-screen bg-neutral-50">
+          <Navigation state={state} updateState={updateState} />
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <button
+              onClick={handleBackClick}
+              className="mb-10 px-5 py-2.5 bg-white rounded-lg shadow-soft text-neutral-700 hover:bg-neutral-100 flex items-center transition-colors btn-primary"
+            >
+              <i className="fa fa-arrow-left mr-2"></i>
+              返回首页
+            </button>
+            <div className="bg-white rounded-2xl shadow-medium overflow-hidden animate-fade-in-up">
+              <div className="p-8 lg:p-12">
+                <div>
+                  <div className="mb-6">
+                    <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
+                      {category?.name}
+                    </span>
+                    <h1 className="text-4xl font-bold text-neutral-900 mb-4">{work.title}</h1>
+                    <div className="flex flex-wrap gap-3 mb-8">
+                      <span className="px-4 py-2 bg-neutral-100 text-neutral-700 rounded-full text-sm font-medium">
+                        {work.year}
+                      </span>
+                      <span className="px-4 py-2 bg-neutral-100 text-neutral-700 rounded-full text-sm font-medium flex items-center">
+                        <i className="fa fa-eye mr-2"></i>
+                        {work.viewCount} 浏览
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mb-10">
+                    <h2 className="text-2xl font-semibold text-neutral-800 mb-4">作品描述</h2>
+                    <p className="text-neutral-600 leading-relaxed text-lg">{work.description}</p>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-neutral-800 mb-6">作品图集</h2>
+                    {/* 大图浏览展示 */}
+                    <div className="space-y-8">
+                      {work.images.map((image, index) => (
+                        <div
+                          key={index}
+                          className="bg-white rounded-xl shadow-medium overflow-hidden card-hover animate-fade-in cursor-pointer"
+                          onClick={() => openImageModal(image)}
+                          style={{ 
+                            animationDelay: `${index * 0.1}s`
+                          }}
+                        >
+                          <div className="overflow-hidden relative group">
+                            <img
+                              src={image}
+                              alt={`${work.title} ${index + 1}`}
+                              className="w-full h-auto transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                              <div className="p-4 text-white">
+                                <h4 className="font-semibold">查看大图</h4>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+          
+          {/* 图片放大模态框 */}
+          {selectedImage && (
+            <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={closeImageModal}>
+              <div className="relative max-w-4xl max-h-[90vh] w-full">
+                <button 
+                  className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeImageModal();
+                  }}
+                >
+                  <i className="fa fa-times text-black"></i>
+                </button>
+                <img 
+                  src={selectedImage} 
+                  alt="放大图片"
+                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // 关于我页面
+    const AboutPage = ({ state, updateState }) => {
+      const aboutMe = state.aboutMe;
+
+      return (
+        <div className="min-h-screen bg-neutral-50">
+          <Navigation state={state} updateState={updateState} />
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-white rounded-2xl shadow-medium overflow-hidden animate-fade-in-up">
+              <div className="grid md:grid-cols-2 gap-12 p-8 lg:p-12">
+                <div>
+                  <div className="aspect-square overflow-hidden rounded-2xl mb-8 border-4 border-neutral-100 shadow-md">
+                    <img
+                      src={aboutMe.avatar}
+                      alt="个人头像"
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                  </div>
+                  <div className="space-y-5">
+                    <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white">
+                        <i className="fa fa-envelope"></i>
+                      </div>
+                      <span className="text-neutral-700 font-medium">{aboutMe.email}</span>
+                    </div>
+                    <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white">
+                        <i className="fa fa-phone"></i>
+                      </div>
+                      <span className="text-neutral-700 font-medium">{aboutMe.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white">
+                        <i className="fa fa-map-marker"></i>
+                      </div>
+                      <span className="text-neutral-700 font-medium">{aboutMe.location}</span>
+                    </div>
+                    {Object.entries(aboutMe.socialLinks).map(([key, value]) => {
+                      if (value) {
+                        return (
+                          <div key={key} className="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl">
+                            <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white">
+                              <i className={`fa fa-${key === 'weixin' ? 'wechat' : key}`}></i>
+                            </div>
+                            <span className="text-neutral-700 font-medium">{value}</span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                  <div className="mt-10 grid grid-cols-2 gap-4">
+                    <div className="bg-gradient-primary text-white rounded-xl p-5 text-center card-hover">
+                      <p className="text-3xl font-bold mb-1">{aboutMe.stats.totalProjects}</p>
+                      <p className="text-white/90">总项目数</p>
+                    </div>
+                    <div className="bg-gradient-secondary text-white rounded-xl p-5 text-center card-hover">
+                      <p className="text-3xl font-bold mb-1">{aboutMe.stats.happyClients}</p>
+                      <p className="text-white/90">满意客户</p>
+                    </div>
+                    <div className="bg-gradient-primary text-white rounded-xl p-5 text-center card-hover">
+                      <p className="text-3xl font-bold mb-1">{aboutMe.stats.experienceYears}</p>
+                      <p className="text-white/90">从业年限</p>
+                    </div>
+                    <div className="bg-gradient-secondary text-white rounded-xl p-5 text-center card-hover">
+                      <p className="text-3xl font-bold mb-1">{aboutMe.stats.awards}</p>
+                      <p className="text-white/90">获奖次数</p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-neutral-900 mb-3">{aboutMe.name}</h1>
+                    <p className="text-2xl bg-gradient-primary text-gradient mb-8">{aboutMe.title}</p>
+                    <div className="space-y-6">
+                      {aboutMe.bio.split('\n\n').map((paragraph, index) => (
+                        <p key={index} className="text-neutral-600 leading-relaxed text-lg">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-neutral-800 mt-10 mb-6">专业技能</h2>
+                    <div className="space-y-6">
+                      {aboutMe.skills.map(skill => (
+                        <div key={skill.id}>
+                          <div className="flex justify-between mb-2">
+                            <span className="text-base font-medium text-neutral-700">{skill.name}</span>
+                          </div>
+                          <div className="w-full bg-neutral-200 rounded-full h-3 overflow-hidden">
+                            <div 
+                              className="bg-gradient-primary h-full rounded-full transition-all duration-1000 ease-out" 
+                              style={{ width: `${skill.level}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-neutral-800 mt-10 mb-6">个人经历</h2>
+                    <div className="space-y-8">
+                      {aboutMe.experiences.map((experience, index) => (
+                        <div key={experience.id} className="relative pl-8 border-l-2 border-primary/30">
+                          <div className="absolute left-[-9px] top-0 w-4 h-4 bg-primary rounded-full"></div>
+                          <div className="bg-white p-5 rounded-xl shadow-medium card-hover">
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3">
+                              <div>
+                                <h3 className="text-xl font-semibold text-neutral-800 mb-1">{experience.company}</h3>
+                                <p className="text-lg font-medium text-primary mb-2">{experience.position}</p>
+                              </div>
+                              <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mt-2 md:mt-0">
+                                {experience.period}
+                              </span>
+                            </div>
+                            <ul className="space-y-2">
+                              {experience.responsibilities.map((responsibility, i) => (
+                                <li key={i} className="flex items-start">
+                                  <i className="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                  <span className="text-neutral-600">{responsibility}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+    };
+
+    // 登录页面
+    const AdminLoginPage = ({ state, updateState }) => {
+      const [username, setUsername] = React.useState('');
+      const [password, setPassword] = React.useState('');
+      const [error, setError] = React.useState('');
+
+      const handleLogin = () => {
+        // 模拟登录验证
+        if (username === 'admin' && password === 'password') {
+          updateState({ 
+            isAdminLoggedIn: true, 
+            step: AppStep.ADMIN_DASHBOARD,
+            currentAdmin: { id: '1', username: 'admin', password: 'hashed', createdAt: new Date().toISOString() }
+          });
+        } else {
+          setError('用户名或密码错误');
+        }
+      };
+
+      const handleBackClick = () => {
+        updateState({ step: AppStep.HOME });
+      };
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">管理员登录</h1>
+              <p className="text-gray-600">请输入您的账号密码</p>
+            </div>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">用户名</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="请输入用户名"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">密码</label>
+                <input
+                  type="password"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="请输入密码"
+                />
+              </div>
+              <button
+                onClick={handleLogin}
+                className="w-full p-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:from-primary/90 hover:to-secondary/90 transition-colors"
+              >
+                登录
+              </button>
+              <button
+                onClick={handleBackClick}
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                返回首页
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // 后台导航组件
+    const AdminNavigation = ({ state, updateState }) => {
+      const handleDashboardClick = () => {
+        updateState({ step: AppStep.ADMIN_DASHBOARD });
+      };
+
+      const handleWorkManageClick = () => {
+        updateState({ step: AppStep.ADMIN_WORK_MANAGE });
+      };
+
+      const handleWorkAddClick = () => {
+        updateState({ step: AppStep.ADMIN_WORK_ADD, selectedWorkId: null });
+      };
+
+      const handleWorkEditClick = (workId) => {
+        updateState({ step: AppStep.ADMIN_WORK_EDIT, selectedWorkId: workId });
+      };
+
+      const handleCategoryManageClick = () => {
+        updateState({ step: AppStep.ADMIN_CATEGORY_MANAGE });
+      };
+
+      const handleAboutManageClick = () => {
+        updateState({ step: AppStep.ADMIN_ABOUT_MANAGE });
+      };
+
+      const handleCategoryAddClick = () => {
+        updateState({ step: AppStep.ADMIN_CATEGORY_ADD, selectedCategoryId: null });
+      };
+
+      const handleCategoryEditClick = (categoryId) => {
+        updateState({ step: AppStep.ADMIN_CATEGORY_EDIT, selectedCategoryId: categoryId });
+      };
+
+      const handleLogoutClick = () => {
+        updateState({ 
+          isAdminLoggedIn: false, 
+          step: AppStep.HOME,
+          currentAdmin: null
+        });
+      };
+
+      const handleBackToFrontClick = () => {
+        updateState({ step: AppStep.HOME });
+      };
+
+      return (
+        <div className="flex h-screen bg-gray-100">
+          {/* 侧边栏 */}
+          <div className="w-64 bg-white shadow-md">
+            <div className="p-4 border-b border-gray-200">
+              <h1 className="text-xl font-bold text-primary">管理后台</h1>
+            </div>
+            <nav className="mt-6">
+              <ul>
+                <li>
+                  <button
+                    onClick={handleDashboardClick}
+                    className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+                  >
+                    <i className="fa fa-dashboard text-gray-500"></i>
+                    <span>控制台</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleWorkManageClick}
+                    className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+                  >
+                    <i className="fa fa-picture-o text-gray-500"></i>
+                    <span>作品管理</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleCategoryManageClick}
+                    className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+                  >
+                    <i className="fa fa-tags text-gray-500"></i>
+                    <span>分类管理</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleAboutManageClick}
+                    className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+                  >
+                    <i className="fa fa-user text-gray-500"></i>
+                    <span>关于我管理</span>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+            <div className="absolute bottom-0 w-64 border-t border-gray-200">
+              <button
+                onClick={handleBackToFrontClick}
+                className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-100 transition-colors"
+              >
+                <i className="fa fa-eye text-gray-500"></i>
+                <span>查看前台</span>
+              </button>
+              <button
+                onClick={handleLogoutClick}
+                className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-100 transition-colors text-red-600"
+              >
+                <i className="fa fa-sign-out text-red-600"></i>
+                <span>退出登录</span>
+              </button>
+            </div>
+          </div>
+          {/* 主内容区域 */}
+          <div className="flex-1 overflow-y-auto">
+            <header className="bg-white shadow-sm p-4 flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {state.step === AppStep.ADMIN_DASHBOARD && '控制台'}
+                {state.step === AppStep.ADMIN_WORK_MANAGE && '作品管理'}
+                {state.step === AppStep.ADMIN_CATEGORY_MANAGE && '分类管理'}
+                {state.step === AppStep.ADMIN_ABOUT_MANAGE && '关于我管理'}
+              </h2>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">欢迎，{state.currentAdmin?.username}</span>
+              </div>
+            </header>
+            <main className="p-6">
+              {/* 控制台页面 */}
+              {state.step === AppStep.ADMIN_DASHBOARD && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800">总作品数</h3>
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                          <i className="fa fa-picture-o"></i>
+                        </div>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900">{state.works.length}</p>
+                    </div>
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800">总分类数</h3>
+                        <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center text-secondary">
+                          <i className="fa fa-tags"></i>
+                        </div>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900">{state.categories.length}</p>
+                    </div>
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800">总访问量</h3>
+                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                          <i className="fa fa-eye"></i>
+                        </div>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900">{state.visitStats.totalVisits}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">作品浏览统计</h3>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead>
+                          <tr>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作品名称</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">浏览次数</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">分类</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">创建时间</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {state.works.map(work => {
+                            const category = state.categories.find(c => c.id === work.category);
+                            return (
+                              <tr key={work.id}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm font-medium text-gray-900">{work.title}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{work.viewCount}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{category?.name}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-500">{new Date(work.createdAt).toLocaleDateString()}</div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 作品管理页面 */}
+              {state.step === AppStep.ADMIN_WORK_MANAGE && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">作品列表</h3>
+                    <button 
+                      onClick={handleWorkAddClick}
+                      className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                    >
+                      <i className="fa fa-plus mr-1"></i>
+                      新增作品
+                    </button>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead>
+                          <tr>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作品名称</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">分类</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">年份</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">浏览次数</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {state.works.map(work => {
+                            const category = state.categories.find(c => c.id === work.category);
+                            
+                            const handleDeleteWork = () => {
+                              if (window.confirm('确定要删除这个作品吗？')) {
+                                const updatedWorks = state.works.filter(w => w.id !== work.id);
+                                updateState({ works: updatedWorks });
+                              }
+                            };
+                            
+                            const handlePreviewWork = () => {
+                              // 打开作品详情页进行预览
+                              updateState({ step: AppStep.WORK_DETAIL, selectedWorkId: work.id });
+                            };
+                            
+                            return (
+                              <tr key={work.id}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <div className="flex-shrink-0 h-10 w-10">
+                                      <img className="h-10 w-10 rounded object-cover" src={work.images[0]} alt={work.title} />
+                                    </div>
+                                    <div className="ml-4">
+                                      <div className="text-sm font-medium text-gray-900">{work.title}</div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{category?.name}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{work.year}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{work.viewCount}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                  <button 
+                                    onClick={() => handlePreviewWork()}
+                                    className="text-blue-600 hover:text-blue-500 mr-3"
+                                  >
+                                    预览
+                                  </button>
+                                  <button 
+                                    onClick={() => handleWorkEditClick(work.id)}
+                                    className="text-primary hover:text-primary/80 mr-3"
+                                  >
+                                    编辑
+                                  </button>
+                                  <button 
+                                    onClick={handleDeleteWork}
+                                    className="text-red-600 hover:text-red-500"
+                                  >
+                                    删除
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 分类管理页面 */}
+              {state.step === AppStep.ADMIN_CATEGORY_MANAGE && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">分类列表</h3>
+                    <button 
+                      onClick={handleCategoryAddClick}
+                      className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                    >
+                      <i className="fa fa-plus mr-1"></i>
+                      新增分类
+                    </button>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead>
+                          <tr>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">分类名称</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">排序</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">作品数</th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {state.categories.map(category => {
+                            const workCount = state.works.filter(work => work.category === category.id).length;
+                            
+                            const handleDeleteCategory = () => {
+                              if (workCount > 0) {
+                                alert('该分类下有作品，无法删除');
+                                return;
+                              }
+                              if (window.confirm('确定要删除这个分类吗？')) {
+                                const updatedCategories = state.categories.filter(c => c.id !== category.id);
+                                updateState({ categories: updatedCategories });
+                              }
+                            };
+                            
+                            return (
+                              <tr key={category.id}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm font-medium text-gray-900">{category.name}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{category.order}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="text-sm text-gray-900">{workCount}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                  <button 
+                                    onClick={() => handleCategoryEditClick(category.id)}
+                                    className="text-primary hover:text-primary/80 mr-3"
+                                  >
+                                    编辑
+                                  </button>
+                                  <button 
+                                    onClick={handleDeleteCategory}
+                                    className="text-red-600 hover:text-red-500"
+                                  >
+                                    删除
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 关于我管理页面 */}
+              {state.step === AppStep.ADMIN_ABOUT_MANAGE && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">关于我信息</h3>
+                    <button className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                      onClick={() => {
+                        // 获取个人信息
+                        const name = document.querySelector('input[placeholder="请输入姓名"]').value;
+                        const title = document.querySelector('input[placeholder="请输入职位"]').value;
+                        const email = document.querySelector('input[placeholder="请输入邮箱"]').value;
+                        const phone = document.querySelector('input[placeholder="请输入电话"]').value;
+                        const location = document.querySelector('input[placeholder="请输入所在地"]').value;
+                        const bio = document.querySelector('textarea[placeholder="请输入个人简介"]').value;
+                        
+                        // 获取社交链接
+                        const weixin = document.querySelector('input[placeholder="请输入微信"]').value;
+                        const weibo = document.querySelector('input[placeholder="请输入微博"]').value;
+                        const github = document.querySelector('input[placeholder="请输入GitHub"]').value;
+                        const dribbble = document.querySelector('input[placeholder="请输入Dribbble"]').value;
+                        
+                        // 获取统计数据
+                        const totalProjects = parseInt(document.querySelector('.stat-input.total-projects').value) || 0;
+                        const happyClients = parseInt(document.querySelector('.stat-input.happy-clients').value) || 0;
+                        const experienceYears = parseInt(document.querySelector('.stat-input.experience-years').value) || 0;
+                        const awards = parseInt(document.querySelector('.stat-input.awards').value) || 0;
+                        
+                        // 获取技能数据
+                        const skillNameInputs = document.querySelectorAll('.skill-name-input');
+                        const skillLevelInputs = document.querySelectorAll('.skill-level-input');
+                        const skills = Array.from(skillNameInputs).map((skillNameInput, index) => {
+                          // 技能等级有两个输入控件，获取number输入的值（索引为2*index+1）
+                          const skillLevelInput = skillLevelInputs[index * 2 + 1]; // 获取number输入
+                          return {
+                            id: Date.now().toString() + index, // 为新技能生成唯一ID
+                            name: skillNameInput ? skillNameInput.value : '新技能',
+                            level: skillLevelInput ? parseInt(skillLevelInput.value) || 0 : 50
+                          };
+                        });
+                        
+                        // 获取个人经历数据
+                        const experienceContainers = document.querySelectorAll('[data-experience-id]');
+                        const experiences = Array.from(experienceContainers).map((container, index) => {
+                          const companyInput = container.querySelector('input[placeholder="请输入公司名称"]');
+                          const positionInput = container.querySelector('input[placeholder="请输入职位"]');
+                          const periodInput = container.querySelector('input[placeholder="例如：2020年-2022年"]');
+                          const responsibilityInputs = container.querySelectorAll('input[placeholder="请输入职责"]');
+                          
+                          return {
+                            id: container.getAttribute('data-experience-id') || Date.now().toString() + index, // 使用容器的data属性或生成新ID
+                            company: companyInput ? companyInput.value : '公司名称',
+                            position: positionInput ? positionInput.value : '职位',
+                            period: periodInput ? periodInput.value : '2020年-2022年',
+                            responsibilities: responsibilityInputs ? Array.from(responsibilityInputs).map(input => input.value).filter(value => value) : ['职责']
+                          };
+                        });
+                        
+                        // 更新状态
+                        updateState({
+                          aboutMe: {
+                            ...state.aboutMe,
+                            name: name || state.aboutMe.name,
+                            title: title || state.aboutMe.title,
+                            email: email || state.aboutMe.email,
+                            phone: phone || state.aboutMe.phone,
+                            location: location || state.aboutMe.location,
+                            bio: bio || state.aboutMe.bio,
+                            socialLinks: {
+                              weixin,
+                              weibo,
+                              github,
+                              dribbble
+                            },
+                            stats: {
+                              totalProjects,
+                              happyClients,
+                              experienceYears,
+                              awards
+                            },
+                            skills,
+                            experiences
+                          }
+                        });
+                        
+                        alert('修改已保存');
+                      }}
+                    >
+                      <i className="fa fa-save mr-1"></i>
+                      保存修改
+                    </button>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="grid md:grid-cols-2 gap-8">
+                      {/* 个人信息表单 */}
+                      <div className="space-y-6">
+                        <h4 className="text-md font-semibold text-gray-800">个人信息</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.name}
+                              placeholder="请输入姓名"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">职位</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.title}
+                              placeholder="请输入职位"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+                            <input
+                              type="email"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.email}
+                              placeholder="请输入邮箱"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">电话</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.phone}
+                              placeholder="请输入电话"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">所在地</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.location}
+                              placeholder="请输入所在地"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">头像上传</label>
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-center w-full">
+                                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i className="fa fa-cloud-upload text-2xl text-gray-400 mb-2"></i>
+                                    <p className="text-sm text-gray-500">点击或拖拽文件到此处上传</p>
+                                    <p className="text-xs text-gray-400 mt-1">支持 JPG、PNG、GIF 格式</p>
+                                  </div>
+                                  <input type="file" className="hidden" accept="image/*"
+                                    onChange={(e) => {
+                                      const file = e.target.files[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                          const imageUrl = e.target.result;
+                                          // 更新头像
+                                          updateState({
+                                            aboutMe: {
+                                              ...state.aboutMe,
+                                              avatar: imageUrl
+                                            }
+                                          });
+                                        };
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }}
+                                  />
+                                </label>
+                              </div>
+                              {state.aboutMe.avatar && (
+                                <div className="flex justify-center">
+                                  <img 
+                                    src={state.aboutMe.avatar} 
+                                    alt="头像预览" 
+                                    className="h-32 w-32 rounded-full object-cover border-2 border-gray-200"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">个人简介</label>
+                            <textarea
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary min-h-[120px]"
+                              defaultValue={state.aboutMe.bio}
+                              placeholder="请输入个人简介"
+                            ></textarea>
+                          </div>
+                        </div>
+
+                        <h4 className="text-md font-semibold text-gray-800 mt-8">社交链接</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">微信</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.socialLinks.weixin}
+                              placeholder="请输入微信"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">微博</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.socialLinks.weibo}
+                              placeholder="请输入微博"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">GitHub</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.socialLinks.github}
+                              placeholder="请输入GitHub"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Dribbble</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.socialLinks.dribbble}
+                              placeholder="请输入Dribbble"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 技能和统计数据 */}
+                      <div className="space-y-6">
+                        <h4 className="text-md font-semibold text-gray-800">专业技能</h4>
+                        <div className="space-y-4">
+                          {state.aboutMe.skills.map((skill, index) => (
+                            <div key={skill.id}>
+                              <div className="flex justify-between mb-1">
+                                <input
+                                  type="text"
+                                  className="skill-name-input text-sm font-medium text-gray-700 border border-transparent hover:border-gray-300 px-2 py-1 rounded"
+                                  defaultValue={skill.name}
+                                />
+                                <span className="text-sm text-gray-500">{skill.level}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-primary h-2 rounded-full" 
+                                  style={{ width: `${skill.level}%` }}
+                                ></div>
+                              </div>
+                              <div className="flex items-center mt-2">
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="100"
+                                  value={skill.level}
+                                  className="skill-level-input w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                  style={{ accentColor: '#3b82f6' }}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    // 同步更新number输入框
+                                    const numberInput = e.target.nextElementSibling;
+                                    if (numberInput) {
+                                      numberInput.value = value;
+                                    }
+                                  }}
+                                />
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  value={skill.level}
+                                  className="skill-level-input ml-3 w-16 p-1 border border-gray-300 rounded text-center"
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value) || 0;
+                                    // 确保值在范围内
+                                    const clampedValue = Math.max(0, Math.min(100, value));
+                                    e.target.value = clampedValue;
+                                    // 同步更新range输入框
+                                    const rangeInput = e.target.previousElementSibling;
+                                    if (rangeInput) {
+                                      rangeInput.value = clampedValue;
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          <button className="mt-4 px-4 py-2 bg-primary/10 text-primary rounded-md hover:bg-primary/20 transition-colors"
+                            onClick={() => {
+                              // 添加新技能
+                              const newSkill = {
+                                id: Date.now().toString(),
+                                name: '新技能',
+                                level: 50
+                              };
+                              
+                              const updatedSkills = [...state.aboutMe.skills, newSkill];
+                              updateState({
+                                aboutMe: {
+                                  ...state.aboutMe,
+                                  skills: updatedSkills
+                                }
+                              });
+                            }}
+                          >
+                            <i className="fa fa-plus mr-1"></i>
+                            新增技能
+                          </button>
+                        </div>
+
+                        <h4 className="text-md font-semibold text-gray-800 mt-8">统计数据</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">总项目数</label>
+                            <input
+                              type="number"
+                              className="stat-input total-projects w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.stats.totalProjects}
+                              placeholder="请输入总项目数"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">满意客户</label>
+                            <input
+                              type="number"
+                              className="stat-input happy-clients w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.stats.happyClients}
+                              placeholder="请输入满意客户数"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">从业年限</label>
+                            <input
+                              type="number"
+                              className="stat-input experience-years w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.stats.experienceYears}
+                              placeholder="请输入从业年限"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">获奖次数</label>
+                            <input
+                              type="number"
+                              className="stat-input awards w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.aboutMe.stats.awards}
+                              placeholder="请输入获奖次数"
+                            />
+                          </div>
+                        </div>
+
+                        <h4 className="text-md font-semibold text-gray-800 mt-8">个人经历</h4>
+                        <div className="space-y-6">
+                          {state.aboutMe.experiences.map((experience, index) => (
+                            <div key={experience.id} className="bg-white p-4 rounded-lg shadow-sm" data-experience-id={experience.id}>
+                              <div className="flex justify-between items-start mb-3">
+                                <h5 className="text-sm font-medium text-gray-800">经历 {index + 1}</h5>
+                                <button 
+                                  className="text-red-600 hover:text-red-800 text-sm"
+                                  onClick={() => {
+                                    const updatedExperiences = state.aboutMe.experiences.filter(exp => exp.id !== experience.id);
+                                    updateState({
+                                      aboutMe: {
+                                        ...state.aboutMe,
+                                        experiences: updatedExperiences
+                                      }
+                                    });
+                                  }}
+                                >
+                                  <i className="fa fa-trash mr-1"></i> 删除
+                                </button>
+                              </div>
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">公司名称</label>
+                                  <input
+                                    type="text"
+                                    className="w-full p-2 border border-gray-300 rounded-lg"
+                                    defaultValue={experience.company}
+                                    placeholder="请输入公司名称"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">职位</label>
+                                  <input
+                                    type="text"
+                                    className="w-full p-2 border border-gray-300 rounded-lg"
+                                    defaultValue={experience.position}
+                                    placeholder="请输入职位"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">工作期间</label>
+                                  <input
+                                    type="text"
+                                    className="w-full p-2 border border-gray-300 rounded-lg"
+                                    defaultValue={experience.period}
+                                    placeholder="例如：2020年-2022年"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">主要职责</label>
+                                  {experience.responsibilities.map((responsibility, respIndex) => (
+                                    <div key={respIndex} className="flex items-center mt-1">
+                                      <input
+                                        type="text"
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg"
+                                        defaultValue={responsibility}
+                                        placeholder="请输入职责"
+                                      />
+                                      <button 
+                                        className="ml-2 text-red-600 hover:text-red-800"
+                                        onClick={() => {
+                                          const updatedExperiences = state.aboutMe.experiences.map(exp => {
+                                            if (exp.id === experience.id) {
+                                              return {
+                                                ...exp,
+                                                responsibilities: exp.responsibilities.filter((_, i) => i !== respIndex)
+                                              };
+                                            }
+                                            return exp;
+                                          });
+                                          updateState({
+                                            aboutMe: {
+                                              ...state.aboutMe,
+                                              experiences: updatedExperiences
+                                            }
+                                          });
+                                        }}
+                                      >
+                                        <i className="fa fa-times"></i>
+                                      </button>
+                                    </div>
+                                  ))}
+                                  <button 
+                                    className="mt-2 px-3 py-1 bg-primary/10 text-primary rounded-md hover:bg-primary/20 transition-colors text-sm"
+                                    onClick={() => {
+                                      const updatedExperiences = state.aboutMe.experiences.map(exp => {
+                                        if (exp.id === experience.id) {
+                                          return {
+                                            ...exp,
+                                            responsibilities: [...exp.responsibilities, '']
+                                          };
+                                        }
+                                        return exp;
+                                      });
+                                      updateState({
+                                        aboutMe: {
+                                          ...state.aboutMe,
+                                          experiences: updatedExperiences
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    <i className="fa fa-plus mr-1"></i>
+                                    添加职责
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          <button className="mt-4 px-4 py-2 bg-primary/10 text-primary rounded-md hover:bg-primary/20 transition-colors"
+                            onClick={() => {
+                              // 添加新经历
+                              const newExperience = {
+                                id: Date.now().toString(),
+                                company: '',
+                                position: '',
+                                period: '',
+                                responsibilities: ['']
+                              };
+                              
+                              const updatedExperiences = [...state.aboutMe.experiences, newExperience];
+                              updateState({
+                                aboutMe: {
+                                  ...state.aboutMe,
+                                  experiences: updatedExperiences
+                                }
+                              });
+                            }}
+                          >
+                            <i className="fa fa-plus mr-1"></i>
+                            新增经历
+                          </button>
+                        </div>
+
+                        {/* 数据可视化图表 */}
+                        <h4 className="text-md font-semibold text-gray-800 mt-8">数据可视化</h4>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <div className="mb-6">
+                            <h5 className="text-sm font-medium text-gray-700 mb-3">技能水平分布</h5>
+                            <div className="grid grid-cols-2 gap-4">
+                              {state.aboutMe.skills.map(skill => (
+                                <div key={skill.id} className="bg-white p-3 rounded shadow-sm">
+                                  <div className="flex justify-between mb-1">
+                                    <span className="text-xs font-medium text-gray-700">{skill.name}</span>
+                                    <span className="text-xs text-gray-500">{skill.level}%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div 
+                                      className="bg-primary h-1.5 rounded-full" 
+                                      style={{ width: `${skill.level}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <h5 className="text-sm font-medium text-gray-700 mb-3">统计数据对比</h5>
+                            <div className="space-y-3">
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <span className="text-xs font-medium text-gray-700">总项目数</span>
+                                  <span className="text-xs text-gray-500">{state.aboutMe.stats.totalProjects}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className="bg-primary h-1.5 rounded-full" 
+                                    style={{ width: `${(state.aboutMe.stats.totalProjects / 50) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <span className="text-xs font-medium text-gray-700">满意客户</span>
+                                  <span className="text-xs text-gray-500">{state.aboutMe.stats.happyClients}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className="bg-secondary h-1.5 rounded-full" 
+                                    style={{ width: `${(state.aboutMe.stats.happyClients / 50) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <span className="text-xs font-medium text-gray-700">从业年限</span>
+                                  <span className="text-xs text-gray-500">{state.aboutMe.stats.experienceYears}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className="bg-accent h-1.5 rounded-full" 
+                                    style={{ width: `${(state.aboutMe.stats.experienceYears / 20) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div>
+                                <div className="flex justify-between mb-1">
+                                  <span className="text-xs font-medium text-gray-700">获奖次数</span>
+                                  <span className="text-xs text-gray-500">{state.aboutMe.stats.awards}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className="bg-green-500 h-1.5 rounded-full" 
+                                    style={{ width: `${(state.aboutMe.stats.awards / 10) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 作品编辑页面 */}
+              {(state.step === AppStep.ADMIN_WORK_ADD || state.step === AppStep.ADMIN_WORK_EDIT) && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {state.step === AppStep.ADMIN_WORK_ADD ? '新增作品' : '编辑作品'}
+                    </h3>
+                    <div className="space-x-2">
+                      <button 
+                        onClick={handleWorkManageClick}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                      >
+                        <i className="fa fa-arrow-left mr-1"></i>
+                        返回列表
+                      </button>
+                      <button 
+                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                        onClick={() => {
+                          // 获取表单数据
+                          const title = document.querySelector('input[placeholder="请输入作品标题"]').value;
+                          const description = document.querySelector('textarea[placeholder="请输入作品描述"]').value;
+                          const category = document.querySelector('select').value;
+                          const year = parseInt(document.querySelector('input[placeholder="请输入年份"]').value);
+                          const dominantColor = document.querySelector('input[type="color"]').value;
+                          
+                          // 获取图片列表
+                          let images = [];
+                          if (state.selectedWorkId) {
+                            const work = state.works.find(w => w.id === state.selectedWorkId);
+                            if (work) {
+                              images.push(...work.images);
+                            }
+                          } else {
+                            // 对于新增作品，使用临时存储的图片
+                            if (state.tempWorkImages && state.tempWorkImages.length > 0) {
+                              images = state.tempWorkImages;
+                            }
+                          }
+                          
+                          // 验证表单
+                          if (!title || !description || !category || !year) {
+                            alert('请填写所有必填字段');
+                            return;
+                          }
+                          
+                          if (state.step === AppStep.ADMIN_WORK_ADD) {
+                            // 新增作品
+                            const newWork = {
+                              id: Date.now().toString(),
+                              title,
+                              description,
+                              images: images.length > 0 ? images : ['https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=placeholder%20image&image_size=portrait_4_3'],
+                              category,
+                              year,
+                              dominantColor,
+                              hsbColor: { h: Math.floor(Math.random() * 360), s: 0.7, b: 0.7 },
+                              viewCount: 0,
+                              createdAt: new Date().toISOString(),
+                              updatedAt: new Date().toISOString()
+                            };
+                            
+                            const updatedWorks = [...state.works, newWork];
+                            console.log('新增作品后：', updatedWorks.length, '个作品');
+                            updateState({ works: updatedWorks, step: AppStep.ADMIN_WORK_MANAGE, tempWorkImages: [] });
+                          } else if (state.step === AppStep.ADMIN_WORK_EDIT) {
+                            // 编辑作品
+                            const updatedWorks = state.works.map(work => {
+                              if (work.id === state.selectedWorkId) {
+                                return {
+                                  ...work,
+                                  title,
+                                  description,
+                                  category,
+                                  year,
+                                  dominantColor,
+                                  updatedAt: new Date().toISOString()
+                                };
+                              }
+                              return work;
+                            });
+                            
+                            updateState({ works: updatedWorks, step: AppStep.ADMIN_WORK_MANAGE });
+                          }
+                        }}
+                      >
+                        <i className="fa fa-save mr-1"></i>
+                        保存作品
+                      </button>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="grid md:grid-cols-2 gap-8">
+                      {/* 作品信息表单 */}
+                      <div className="space-y-6">
+                        <h4 className="text-md font-semibold text-gray-800">作品信息</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">作品标题</label>
+                            <input
+                              type="text"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.selectedWorkId ? state.works.find(w => w.id === state.selectedWorkId)?.title : ''}
+                              placeholder="请输入作品标题"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">作品描述</label>
+                            <textarea
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary min-h-[120px]"
+                              defaultValue={state.selectedWorkId ? state.works.find(w => w.id === state.selectedWorkId)?.description : ''}
+                              placeholder="请输入作品描述"
+                            ></textarea>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">分类</label>
+                            <select
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.selectedWorkId ? state.works.find(w => w.id === state.selectedWorkId)?.category : ''}
+                            >
+                              <option value="">请选择分类</option>
+                              {state.categories.map(category => (
+                                <option key={category.id} value={category.id}>
+                                  {category.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">年份</label>
+                            <input
+                              type="number"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                              defaultValue={state.selectedWorkId ? state.works.find(w => w.id === state.selectedWorkId)?.year : new Date().getFullYear()}
+                              placeholder="请输入年份"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">主色调</label>
+                            <div className="flex items-center space-x-3">
+                              <input
+                                type="color"
+                                className="w-10 h-10 rounded border border-gray-300"
+                                defaultValue={state.selectedWorkId ? state.works.find(w => w.id === state.selectedWorkId)?.dominantColor : '#3b82f6'}
+                              />
+                              <input
+                                type="text"
+                                className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                defaultValue={state.selectedWorkId ? state.works.find(w => w.id === state.selectedWorkId)?.dominantColor : '#3b82f6'}
+                                placeholder="请输入主色调"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 图片上传和预览 */}
+                      <div className="space-y-6">
+                        <h4 className="text-md font-semibold text-gray-800">图片管理</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">图片预览</label>
+                            <div className="grid grid-cols-2 gap-3">
+                              {/* 显示已有的图片 */}
+                              {state.selectedWorkId && state.works.find(w => w.id === state.selectedWorkId)?.images.map((image, index) => (
+                                <div key={index} className="relative">
+                                  <div className="aspect-[3/4] overflow-hidden rounded-lg border border-gray-200">
+                                    <img
+                                      src={image}
+                                      alt={`作品图片 ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <button className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                                    onClick={() => {
+                                      const workId = state.selectedWorkId;
+                                      if (workId) {
+                                        const work = state.works.find(w => w.id === workId);
+                                        if (work) {
+                                          const updatedWorks = state.works.map(w => {
+                                            if (w.id === workId) {
+                                              return {
+                                                ...w,
+                                                images: w.images.filter((_, i) => i !== index)
+                                              };
+                                            }
+                                            return w;
+                                          });
+                                          updateState({ works: updatedWorks });
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    <i className="fa fa-times text-xs"></i>
+                                  </button>
+                                </div>
+                              ))}
+                              {/* 显示临时存储的图片（新增作品时） */}
+                              {!state.selectedWorkId && state.tempWorkImages && state.tempWorkImages.length > 0 && state.tempWorkImages.map((image, index) => (
+                                <div key={index} className="relative">
+                                  <div className="aspect-[3/4] overflow-hidden rounded-lg border border-gray-200">
+                                    <img
+                                      src={image}
+                                      alt={`作品图片 ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        console.error('图片加载失败:', e.target.src);
+                                        e.target.src = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=image%20placeholder&image_size=portrait_4_3';
+                                      }}
+                                    />
+                                  </div>
+                                  <button className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                                    onClick={() => {
+                                      // 从临时存储中删除图片
+                                      updateState(prev => ({
+                                        tempWorkImages: prev.tempWorkImages.filter((_, i) => i !== index)
+                                      }));
+                                    }}
+                                  >
+                                    <i className="fa fa-times text-xs"></i>
+                                  </button>
+                                </div>
+                              ))}
+                              {/* 显示无图片提示 */}
+                              {((!state.selectedWorkId && (!state.tempWorkImages || state.tempWorkImages.length === 0)) || 
+                                (state.selectedWorkId && !state.works.find(w => w.id === state.selectedWorkId)?.images)) && (
+                                <div className="col-span-2 aspect-[3/4] overflow-hidden rounded-lg border border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                                  <p className="text-gray-400">暂无图片，请添加图片</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="text-md font-semibold text-gray-800 mb-4">图片上传</h4>
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <i className="fa fa-cloud-upload text-4xl text-gray-400 mb-3"></i>
+                            <p className="text-gray-600 mb-2">点击或拖拽文件到此处上传</p>
+                            <p className="text-gray-400 text-sm">支持 JPG、PNG、GIF 格式，单个文件不超过 5MB</p>
+                            
+                            {/* 上传进度条 */}
+                            <div className="mt-4 hidden" id="uploadProgressContainer">
+                              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                <div id="uploadProgressBar" className="bg-primary h-2.5 rounded-full" style={{ width: '0%' }}></div>
+                              </div>
+                              <p id="uploadProgressText" className="mt-2 text-sm text-gray-600">上传中...</p>
+                            </div>
+                            
+                            <input
+                              type="file"
+                              className="hidden"
+                              id="imageUpload"
+                              multiple
+                              accept="image/*"
+                              onChange={(e) => {
+                                const files = e.target.files;
+                                if (files.length > 0) {
+                                  // 显示上传进度条
+                                  const progressContainer = document.getElementById('uploadProgressContainer');
+                                  const progressBar = document.getElementById('uploadProgressBar');
+                                  const progressText = document.getElementById('uploadProgressText');
+                                  progressContainer.classList.remove('hidden');
+                                  progressBar.style.width = '0%';
+                                  progressText.textContent = '准备上传...';
+                                  
+                                  // 处理上传的文件
+                                  const workId = state.selectedWorkId;
+                                  const newImages = [];
+                                  let completedFiles = 0;
+                                  
+                                  // 先读取所有文件，然后一次性更新状态，提高性能
+                                  const readFilePromises = Array.from(files).map(file => {
+                                    return new Promise((resolve) => {
+                                      const reader = new FileReader();
+                                      reader.onload = function(e) {
+                                        const imageUrl = e.target.result;
+                                        newImages.push(imageUrl);
+                                        // 自动生成颜色（只使用第一张图片生成颜色）
+                                        if (newImages.length === 1) {
+                                          generateColorsFromImage(imageUrl);
+                                        }
+                                        
+                                        // 更新进度条
+                                        completedFiles++;
+                                        const progress = Math.round((completedFiles / files.length) * 100);
+                                        progressBar.style.width = `${progress}%`;
+                                        progressText.textContent = `上传中... ${completedFiles}/${files.length}`;
+                                        
+                                        resolve(imageUrl);
+                                      };
+                                      reader.readAsDataURL(file);
+                                    });
+                                  });
+                                  
+                                  // 所有文件读取完成后更新状态
+                                  Promise.all(readFilePromises).then(() => {
+                                    // 隐藏进度条
+                                    progressContainer.classList.add('hidden');
+                                    
+                                    if (workId) {
+                                      // 编辑作品：更新works数组
+                                      const updatedWorks = state.works.map(w => {
+                                        if (w.id === workId) {
+                                          return {
+                                            ...w,
+                                            images: [...w.images, ...newImages]
+                                          };
+                                        }
+                                        return w;
+                                      });
+                                      updateState({ works: updatedWorks });
+                                    } else {
+                                      // 新增作品：更新临时存储
+                                      updateState(prev => ({
+                                        tempWorkImages: [...(prev.tempWorkImages || []), ...newImages]
+                                      }));
+                                    }
+                                  });
+                                }
+                              }}
+                            />
+                            <label 
+                              htmlFor="imageUpload"
+                              className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors cursor-pointer"
+                            >
+                              <i className="fa fa-folder-open mr-1"></i>
+                              选择文件
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 分类编辑页面 */}
+              {(state.step === AppStep.ADMIN_CATEGORY_ADD || state.step === AppStep.ADMIN_CATEGORY_EDIT) && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {state.step === AppStep.ADMIN_CATEGORY_ADD ? '新增分类' : '编辑分类'}
+                    </h3>
+                    <div className="space-x-2">
+                      <button 
+                        onClick={handleCategoryManageClick}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                      >
+                        <i className="fa fa-arrow-left mr-1"></i>
+                        返回列表
+                      </button>
+                      <button 
+                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                        onClick={() => {
+                          // 获取表单数据
+                          const name = document.querySelector('input[placeholder="请输入分类名称"]').value;
+                          const order = parseInt(document.querySelector('input[placeholder="请输入排序"]').value);
+                          
+                          // 验证表单
+                          if (!name || !order) {
+                            alert('请填写所有必填字段');
+                            return;
+                          }
+                          
+                          if (state.step === AppStep.ADMIN_CATEGORY_ADD) {
+                            // 新增分类
+                            const newCategory = {
+                              id: Date.now().toString(),
+                              name,
+                              order,
+                              createdAt: new Date().toISOString(),
+                              updatedAt: new Date().toISOString()
+                            };
+                            
+                            const updatedCategories = [...state.categories, newCategory];
+                            updateState({ categories: updatedCategories, step: AppStep.ADMIN_CATEGORY_MANAGE });
+                          } else if (state.step === AppStep.ADMIN_CATEGORY_EDIT) {
+                            // 编辑分类
+                            const updatedCategories = state.categories.map(category => {
+                              if (category.id === state.selectedCategoryId) {
+                                return {
+                                  ...category,
+                                  name,
+                                  order,
+                                  updatedAt: new Date().toISOString()
+                                };
+                              }
+                              return category;
+                            });
+                            
+                            updateState({ categories: updatedCategories, step: AppStep.ADMIN_CATEGORY_MANAGE });
+                          }
+                        }}
+                      >
+                        <i className="fa fa-save mr-1"></i>
+                        保存分类
+                      </button>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="max-w-md">
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">分类名称 *</label>
+                          <input
+                            type="text"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                            defaultValue={state.selectedCategoryId ? state.categories.find(c => c.id === state.selectedCategoryId)?.name : ''}
+                            placeholder="请输入分类名称"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">排序 *</label>
+                          <input
+                            type="number"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                            defaultValue={state.selectedCategoryId ? state.categories.find(c => c.id === state.selectedCategoryId)?.order : state.categories.length + 1}
+                            placeholder="请输入排序"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    // 主应用组件
+    const MainApp = () => {
+      const [state, setState] = React.useState(initialState);
+
+      const updateState = (updater) => {
+        setState(prev => ({
+          ...prev,
+          ...updater
+        }));
+      };
+
+      const handleWorkClick = (workId) => {
+        // 增加浏览次数
+        const updatedWorks = state.works.map(work => 
+          work.id === workId ? { ...work, viewCount: work.viewCount + 1 } : work
+        );
+        const updatedVisitStats = {
+          ...state.visitStats,
+          workVisits: {
+            ...state.visitStats.workVisits,
+            [workId]: (state.visitStats.workVisits[workId] || 0) + 1
+          }
+        };
+        updateState({
+          works: updatedWorks,
+          visitStats: updatedVisitStats,
+          selectedWorkId: workId,
+          step: AppStep.WORK_DETAIL
+        });
+      };
+
+      // 根据当前步骤渲染不同页面
+      const renderPage = () => {
+        switch (state.step) {
+          case AppStep.WORK_DETAIL:
+            return <WorkDetailPage state={state} updateState={updateState} />;
+          case AppStep.ABOUT:
+            return <AboutPage state={state} updateState={updateState} />;
+          case AppStep.ADMIN_LOGIN:
+            return <AdminLoginPage state={state} updateState={updateState} />;
+          case AppStep.ADMIN_DASHBOARD:
+          case AppStep.ADMIN_WORK_MANAGE:
+          case AppStep.ADMIN_CATEGORY_MANAGE:
+          case AppStep.ADMIN_WORK_ADD:
+          case AppStep.ADMIN_WORK_EDIT:
+          case AppStep.ADMIN_CATEGORY_ADD:
+          case AppStep.ADMIN_CATEGORY_EDIT:
+          case AppStep.ADMIN_ABOUT_MANAGE:
+            return <AdminNavigation state={state} updateState={updateState} />;
+          case AppStep.HOME:
+          default:
+            const filteredWorks = state.selectedCategoryId 
+              ? state.works.filter(work => work.category === state.selectedCategoryId)
+              : state.works;
+            return (
+              <div className="min-h-screen bg-light">
+                <Navigation state={state} updateState={updateState} />
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                  {/* 关于我信息展示 */}
+                  <div className="bg-white rounded-2xl shadow-medium overflow-hidden animate-fade-in-up mb-12">
+                    <div className="grid md:grid-cols-2 gap-8 p-8 lg:p-12">
+                      <div>
+                        <div className="aspect-square overflow-hidden rounded-2xl mb-6 border-4 border-neutral-100 shadow-md w-48 mx-auto md:mx-0">
+                          <img
+                            src={state.aboutMe.avatar}
+                            alt="个人头像"
+                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                          />
+                        </div>
+                        <div className="space-y-4 text-center md:text-left">
+                          <h2 className="text-2xl font-bold text-gray-800">{state.aboutMe.name}</h2>
+                          <p className="text-xl text-primary font-medium">{state.aboutMe.title}</p>
+                          <p className="text-gray-600 mt-4">{state.aboutMe.bio.split('\n\n')[0]}</p>
+                          <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
+                            <button
+                              onClick={() => updateState({ step: AppStep.ABOUT })}
+                              className="px-5 py-2.5 bg-gradient-primary text-white rounded-lg hover:shadow-lg transition-all btn-primary"
+                            >
+                              了解更多
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-6">个人统计</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-gradient-primary text-white rounded-xl p-5 text-center card-hover">
+                            <p className="text-3xl font-bold mb-1">{state.aboutMe.stats.totalProjects}</p>
+                            <p className="text-white/90">总项目数</p>
+                          </div>
+                          <div className="bg-gradient-secondary text-white rounded-xl p-5 text-center card-hover">
+                            <p className="text-3xl font-bold mb-1">{state.aboutMe.stats.happyClients}</p>
+                            <p className="text-white/90">满意客户</p>
+                          </div>
+                          <div className="bg-gradient-primary text-white rounded-xl p-5 text-center card-hover">
+                            <p className="text-3xl font-bold mb-1">{state.aboutMe.stats.experienceYears}</p>
+                            <p className="text-white/90">从业年限</p>
+                          </div>
+                          <div className="bg-gradient-secondary text-white rounded-xl p-5 text-center card-hover">
+                            <p className="text-3xl font-bold mb-1">{state.aboutMe.stats.awards}</p>
+                            <p className="text-white/90">获奖次数</p>
+                          </div>
+                        </div>
+                        <div className="mt-8">
+                          <h3 className="text-xl font-semibold text-gray-800 mb-4">专业技能</h3>
+                          <div className="space-y-3">
+                            {state.aboutMe.skills.slice(0, 4).map(skill => (
+                              <div key={skill.id}>
+                                <div className="flex justify-between mb-1">
+                                  <span className="text-sm font-medium text-gray-700">{skill.name}</span>
+                                  <span className="text-sm text-gray-500">{skill.level}%</span>
+                                </div>
+                                <div className="w-full bg-neutral-200 rounded-full h-2.5 overflow-hidden">
+                                  <div 
+                                    className="bg-gradient-primary h-full rounded-full transition-all duration-1000 ease-out" 
+                                    style={{ width: `${skill.level}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* 作品列表 */}
+                  <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                      {state.selectedCategoryId 
+                        ? state.categories.find(c => c.id === state.selectedCategoryId)?.name 
+                        : '全部作品'
+                      }
+                    </h1>
+                    <p className="text-gray-600">
+                      共 {filteredWorks.length} 个作品
+                    </p>
+                  </div>
+                  <WaterfallGrid works={filteredWorks} onWorkClick={handleWorkClick} />
+                </main>
+                <footer className="bg-white border-t border-gray-200 mt-12">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center">
+                      <div className="mb-4 md:mb-0">
+                        <p className="text-gray-600">© 2024 个人作品集. 保留所有权利.</p>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <span className="text-gray-600 flex items-center">
+                          <i className="fa fa-eye mr-1"></i>
+                          总访问量: {state.visitStats.totalVisits}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </footer>
+              </div>
+            );
+        }
+      };
+
+      return renderPage();
+    };
+
+    // 渲染应用
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+      <div className="transition-all duration-300 ease-in-out">
+        <MainApp />
+      </div>
+    );
+  </script>
 </body>
 </html>
