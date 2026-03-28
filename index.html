@@ -318,6 +318,84 @@
 <body class="bg-light text-dark min-h-screen">
   <div id="root"></div>
   <script type="text/jsx">
+    // 密码验证组件
+    const PasswordProtection = ({ onPasswordCorrect }) => {
+      const [password, setPassword] = React.useState('');
+      const [error, setError] = React.useState('');
+      const [isLoading, setIsLoading] = React.useState(false);
+
+      // 获取当天日期，格式为月.日（如3.28）
+      const getTodayDate = () => {
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        return `${month}.${day}`;
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        // 模拟验证延迟
+        setTimeout(() => {
+          if (password === getTodayDate()) {
+            onPasswordCorrect();
+          } else {
+            setError('密码错误，请输入当天日期（格式：月.日）');
+          }
+          setIsLoading(false);
+        }, 500);
+      };
+
+      return (
+        <div className="fixed inset-0 bg-gradient-to-br from-primary to-secondary flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <i className="fa fa-lock text-white text-2xl"></i>
+              </div>
+              <h1 className="text-2xl font-bold text-neutral-800 mb-2">访问密码</h1>
+              <p className="text-neutral-600">请输入当天日期作为访问密码</p>
+              <p className="text-neutral-500 text-sm mt-2">格式：月.日（如：3.28）</p>
+            </div>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">密码</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary input-focus"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="请输入当天日期"
+                  disabled={isLoading}
+                  autoFocus
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full p-3 bg-gradient-primary text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-70"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <i className="fa fa-spinner fa-spin mr-2"></i>
+                    验证中...
+                  </div>
+                ) : (
+                  '验证密码'
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    };
     // 类型定义
     const AppStep = {
       HOME: 'HOME',
@@ -626,7 +704,8 @@
       aboutMe: mockAboutMe,
       isAdminLoggedIn: false,
       currentAdmin: null,
-      tempWorkImages: []
+      tempWorkImages: [],
+      isPasswordVerified: false
     };
 
     // 导航组件
@@ -2511,6 +2590,10 @@
         }));
       };
 
+      const handlePasswordCorrect = () => {
+        updateState({ isPasswordVerified: true });
+      };
+
       const handleWorkClick = (workId) => {
         // 增加浏览次数
         const updatedWorks = state.works.map(work => 
@@ -2660,7 +2743,12 @@
         }
       };
 
-      return renderPage();
+      return (
+        <div className="min-h-screen">
+          {!state.isPasswordVerified && <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />}
+          {state.isPasswordVerified && renderPage()}
+        </div>
+      );
     };
 
     // 渲染应用
