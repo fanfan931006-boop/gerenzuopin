@@ -342,7 +342,7 @@
           if (password === getTodayDate()) {
             onPasswordCorrect();
           } else {
-            setError('密码错误，请输入当天日期（格式：月.日）');
+            setError('密码错误，请联系管理员获取正确密码');
           }
           setIsLoading(false);
         }, 500);
@@ -356,8 +356,7 @@
                 <i className="fa fa-lock text-white text-2xl"></i>
               </div>
               <h1 className="text-2xl font-bold text-neutral-800 mb-2">访问密码</h1>
-              <p className="text-neutral-600">请输入当天日期作为访问密码</p>
-              <p className="text-neutral-500 text-sm mt-2">格式：月.日（如：3.28）</p>
+              <p className="text-neutral-600">请输入访问密码</p>
             </div>
             {error && (
               <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md text-sm">
